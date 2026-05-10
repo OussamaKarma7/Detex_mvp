@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FiscalAudit Pro — Maroc</title>
+<style>
+:root{
+  --navy:#1a365d;--navy-l:#2c5282;--navy-p:#ebf4ff;
+  --crit:#c53030;--crit-bg:#fff5f5;
+  --warn:#c05621;--warn-bg:#fffaf0;
+  --ok:#276749;--ok-bg:#f0fff4;
+  --g50:#f7fafc;--g100:#edf2f7;--g200:#e2e8f0;--g500:#718096;--g900:#1a202c;
+  --wh:#fff;--r:10px;--rl:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--g50);color:var(--g900);min-height:100vh}
+header{background:var(--navy);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.logo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:700;font-size:1.05rem}
+.logo-i{width:30px;height:30px;background:linear-gradient(135deg,#4299e1,#63b3ed);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.hbadge{background:rgba(255,255,255,.15);color:#fff;padding:2px 9px;border-radius:20px;font-size:.7rem;font-weight:600;letter-spacing:.4px}
+.container{max-width:1300px;margin:0 auto;padding:1.5rem 1.25rem}
+.ptitle{font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.psub{color:var(--g500);font-size:.88rem;margin-bottom:1.5rem}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:1.25rem;align-items:start}
+@media(max-width:960px){.grid{grid-template-columns:1fr}}
+
+/* CARDS */
+.card{background:var(--wh);border-radius:var(--rl);border:.5px solid var(--g200);box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;margin-bottom:.9rem}
+.card-hdr{padding:.85rem 1.1rem;border-bottom:.5px solid var(--g100);display:flex;align-items:center;gap:9px}
+.card-hdr h3{font-size:.9rem;font-weight:700;color:var(--navy)}
+.card-body{padding:1.1rem}
+
+/* FORM */
+.fr{margin-bottom:.85rem}
+label{display:block;font-size:.75rem;font-weight:600;color:var(--g900);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+input[type=text],input[type=number],select{width:100%;padding:8px 11px;border:1.5px solid var(--g200);border-radius:var(--r);font-size:.88rem;outline:none;background:var(--wh);transition:border-color .2s}
+input:focus,select:focus{border-color:var(--navy-l)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BLOCS GRID */
+.blocs-g{display:grid;grid-template-columns:1fr;gap:7px}
+.bloc-c{border:1.5px solid var(--g200);border-radius:var(--r);padding:9px 11px;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:9px;position:relative}
+.bloc-c:hover{border-color:var(--navy-l);background:var(--navy-p)}
+.bloc-c.sel{border-color:var(--navy);background:var(--navy-p);box-shadow:0 0 0 3px rgba(26,54,93,.08)}
+.bloc-c input[type=checkbox]{display:none}
+.bicon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.binfo h4{font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:1px}
+.binfo p{font-size:.72rem;color:var(--g500);line-height:1.4}
+.bdocs{font-size:.68rem;color:var(--navy-l);font-weight:600;margin-top:3px}
+.bchk{position:absolute;top:7px;right:9px;width:17px;height:17px;border:2px solid var(--g200);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.68rem;color:#fff;background:#fff;transition:all .18s}
+.bloc-c.sel .bchk{background:var(--navy);border-color:var(--navy)}
+.bloc-c.sel .bchk::after{content:"✓"}
+
+/* FILE INPUTS */
+.fwrap{position:relative;border:1.5px dashed var(--g200);border-radius:var(--r);padding:9px 13px;cursor:pointer;transition:all .18s;background:var(--g50);display:flex;align-items:center;gap:7px;font-size:.83rem;color:var(--g500)}
+.fwrap:hover{border-color:var(--navy-l);background:var(--navy-p);color:var(--navy)}
+.fwrap.has{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.fwrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.ftag{font-size:.63rem;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:auto;white-space:nowrap}
+.req{background:var(--crit-bg);color:var(--crit)}
+.opt{background:var(--warn-bg);color:var(--warn)}
+.consigne{background:var(--navy-p);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--navy-l);margin-top:5px;line-height:1.5}
+.consigne code{background:rgba(26,54,93,.1);padding:1px 5px;border-radius:3px;font-size:.7rem}
+
+/* TVA OPTIONS */
+.tabs-tva{display:flex;gap:0;margin-bottom:8px;border:.5px solid var(--g200);border-radius:var(--r);overflow:hidden}
+.tab-tva{flex:1;padding:6px 10px;border:none;background:var(--g50);font-size:.78rem;font-weight:600;color:var(--g500);cursor:pointer;transition:all .18s}
+.tab-tva.act{background:var(--navy);color:#fff}
+
+/* TVA TABLE */
+.tva-tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.tva-tbl th{background:var(--navy);color:#fff;padding:6px 7px;text-align:left;font-size:.72rem}
+.tva-tbl td{padding:4px 5px;border-bottom:.5px solid var(--g100)}
+.tva-tbl input{width:100%;border:.5px solid var(--g200);border-radius:4px;padding:3px 6px;font-size:.77rem}
+.btn-add{font-size:.75rem;color:var(--navy-l);background:none;border:.5px dashed var(--g200);border-radius:5px;padding:5px 10px;cursor:pointer;margin-top:5px;width:100%;transition:all .18s}
+.btn-add:hover{background:var(--navy-p);border-color:var(--navy)}
+
+/* SUBMIT */
+.btn-go{width:100%;padding:13px;background:linear-gradient(135deg,var(--navy),var(--navy-l));color:#fff;border:none;border-radius:var(--r);font-size:.97rem;font-weight:700;cursor:pointer;transition:all .18s;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-go:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 18px rgba(26,54,93,.28)}
+.btn-go:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+/* ALERT */
+.alert{padding:9px 13px;border-radius:var(--r);font-size:.83rem;margin-bottom:.8rem;border-left:4px solid}
+.alert-e{background:var(--crit-bg);border-color:var(--crit);color:var(--crit)}
+.alert-w{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+
+/* RESULTS */
+.score-b{padding:1.3rem;border-radius:var(--rl);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem}
+.score-b.h{background:linear-gradient(135deg,#c53030,#e53e3e);color:#fff}
+.score-b.m{background:linear-gradient(135deg,#c05621,#ed8936);color:#fff}
+.score-b.l{background:linear-gradient(135deg,#276749,#38a169);color:#fff}
+.score-v{font-size:3.2rem;font-weight:800;line-height:1}
+.score-l{font-size:.82rem;opacity:.9;margin-top:1px}
+.sstats{display:flex;gap:1.3rem}
+.sstat .sv{font-size:1.9rem;font-weight:800;line-height:1}
+.sstat .sl{font-size:.72rem;opacity:.85}
+
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:.9rem}
+.fbtn{padding:4px 13px;border-radius:20px;border:1.5px solid var(--g200);background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .18s;color:var(--g500)}
+.fbtn:hover{border-color:var(--navy);color:var(--navy)}
+.fbtn.act{background:var(--navy);color:#fff;border-color:var(--navy)}
+.fbtn.crit.act{background:var(--crit);border-color:var(--crit)}
+.fbtn.warn.act{background:var(--warn);border-color:var(--warn)}
+.fbtn.ok.act{background:var(--ok);border-color:var(--ok)}
+
+.alist{display:flex;flex-direction:column;gap:9px}
+.ac{border-radius:var(--r);border:1px solid;padding:.9rem 1rem;transition:box-shadow .18s}
+.ac:hover{box-shadow:0 3px 14px rgba(0,0,0,.09)}
+.ac.CRITIQUE{border-color:var(--crit);border-left:4px solid var(--crit);background:var(--crit-bg)}
+.ac.MOYEN{border-color:#fed7aa;border-left:4px solid var(--warn);background:var(--warn-bg)}
+.ac.FAIBLE{border-color:#c6f6d5;border-left:4px solid var(--ok);background:var(--ok-bg)}
+.ahdr{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.sbadge{font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.4px}
+.sbadge.CRITIQUE{background:var(--crit);color:#fff}
+.sbadge.MOYEN{background:var(--warn);color:#fff}
+.sbadge.FAIBLE{background:var(--ok);color:#fff}
+.acode{font-size:.72rem;color:var(--g500);font-family:monospace}
+.adesc{font-size:.86rem;font-weight:600;flex:1}
+.amnt{font-size:.78rem;font-weight:700;color:var(--navy);background:rgba(26,54,93,.1);padding:1px 7px;border-radius:4px;white-space:nowrap}
+.acgi{display:inline-flex;align-items:center;gap:3px;background:#e9d8fd;color:#553c9a;padding:2px 7px;border-radius:4px;font-size:.7rem;font-weight:600;margin-bottom:5px}
+.areco{color:var(--g500);line-height:1.5;font-size:.8rem}
+.areco::before{content:"→ ";font-weight:700;color:var(--navy)}
+
+.btn-dl{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--navy);color:#fff;border-radius:var(--r);font-size:.86rem;font-weight:700;text-decoration:none;transition:all .18s;border:none;cursor:pointer}
+.btn-dl:hover{background:var(--navy-l);transform:translateY(-1px)}
+
+/* WARNINGS */
+.warn-box{background:var(--warn-bg);border:.5px solid #fed7aa;border-radius:var(--r);padding:8px 12px;margin-bottom:.8rem;font-size:.8rem;color:var(--warn)}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--g500)}
+.empty .ei{font-size:2.8rem;margin-bottom:.8rem}
+
+/* LOADING */
+.lo{display:none;position:fixed;inset:0;background:rgba(26,32,44,.68);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;color:#fff}
+.lo.act{display:flex}
+.sp{width:44px;height:44px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.sec-hdr h2{font-size:1.05rem;font-weight:700;color:var(--navy)}
+
+.ca-detected{background:var(--ok-bg);border:.5px solid #c6f6d5;border-radius:6px;padding:5px 10px;font-size:.78rem;color:var(--ok);margin-top:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-i">📊</div>FiscalAudit Pro</div>
+  <span class="hbadge">MAROC — CGI LF2024/2026</span>
+</header>
+
+<div class="lo" id="lo"><div class="sp"></div><div style="font-size:.95rem;font-weight:600">Analyse en cours...</div></div>
+
+<div class="container">
+  <p class="ptitle">Audit Fiscal Préventif</p>
+  <p class="psub">Détectez les anomalies TVA, IS, bancaires et CGNC — avant un contrôle DGI</p>
+
+  <div class="grid">
+    <!-- ══ PANNEAU GAUCHE ══ -->
+    <div>
+
+      <!-- Infos mission -->
+      <div class="card">
+        <div class="card-hdr"><span>🏢</span><h3>Mission</h3></div>
+        <div class="card-body">
+          <div class="fr"><label>Raison sociale</label><input type="text" id="nom" placeholder="SARL MAROC TECH"></div>
+          <div class="row2">
+            <div class="fr"><label>Exercice N</label><input type="number" id="exercice" value="2024" min="2015" max="2030"></div>
+            <div class="fr"><label>CA HT estimé (MAD)</label><input type="number" id="ca" placeholder="Auto depuis FEC"></div>
+          </div>
+          <div class="fr"><label>Résultat comptable (MAD)</label><input type="number" id="resultat" placeholder="0"></div>
+        </div>
+      </div>
+
+      <!-- FEC — Documents principaux -->
+      <div class="card">
+        <div class="card-hdr"><span>📂</span><h3>Fichiers FEC (Sage / Ciel / tout logiciel)</h3></div>
+        <div class="card-body">
+          <p style="font-size:.78rem;color:var(--g500);margin-bottom:10px">Dans Sage : <code style="background:var(--g100);padding:1px 5px;border-radius:3px">Fichier → Exporter → Fichier des Écritures Comptables → OK</code></p>
+
+          <div class="fr">
+            <label>FEC Exercice N <span style="color:var(--g500);font-weight:400;text-transform:none">(remplace Grand Livre + Balance N)</span></label>
+            <div class="fwrap" id="wrap-fec_n" onclick="this.querySelector('input').click()">
+              <span>📄</span><span id="lbl-fec_n">Choisir fichier FEC (.txt) ou Excel/CSV...</span>
+              <span class="ftag req">REQUIS</span>
+              <input type="file" name="fec_n" accept=".txt,.csv,.xlsx,.xls" onchange="onFile('fec_n',this)" onclick="event.stopPropagation()">
+            </div>
+          </div>
+
+          <div class="fr">
+            <label>FEC Exercice N-1 <span style="color:var(--g500);font-weight:400;text-transform:none">(pour Bloc 4 uniquement)</span></label>
+            <div class="fwrap" id="wrap-fec_n1" onclick="this.querySelector('input').click()">
+              <span>📄</span><span id="lbl-fec_n1">Choisir FEC N-1 (optionnel)...</span>
+              <span class="ftag opt">OPTIONNEL</span>
+              <input type="file" name="fec_n1" accept=".txt,.csv,.xlsx,.xls" onchange="onFile('fec_n1',this)" onclick="event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélection blocs -->
+      <div class="card">
+        <div class="card-hdr"><span>🔍</span><h3>Blocs d'analyse</h3></div>
+        <div class="card-body">
+          <div class="blocs-g" id="blocs-g">
+
+            <label class="bloc-c" id="lb1"><input type="checkbox" name="blocs" value="bloc1" onchange="updateBlocs()">
+              <div class="bicon" style="background:#ebf4ff">🧾</div>
+              <div class="binfo"><h4>BLOC 1 — Audit TVA</h4><p>Écart CA/TVA, taux invalides, prorata, retenue source LF2024</p>
+              <div class="bdocs">📁 FEC N + Déclarations TVA</div></div><div class="bchk"></div></label>
+
+            <label class="bloc-c" id="lb2"><input type="checkbox" name="blocs" value="bloc2" onchange="updateBlocs()">
+              <div class="bicon" style="background:#f0fff4">💼</div>
+              <div class="binfo"><h4>BLOC 2 — IS / Résultat fiscal</h4><p>Charges non déductibles, amortissements, CM, espèces</p>
+              <div class="bdocs">📁 FEC N</div></div><div class="bchk"></div></label>
+
+            <label class="bloc-c" id="lb3"><input type="checkbox" name="blocs" value="bloc3" onchange="updateBlocs()">
+              <div class="bicon" style="background:#fef9c3">🏦</div>
+              <div class="binfo"><h4>BLOC 3 — Rapprochement bancaire</h4><p>Écart GL/relevé, encaissements non comptabilisés</p>
+              <div class="bdocs">📁 FEC N + Relevé bancaire</div></div><div class="bchk"></div></label>
+
+            <label class="bloc-c" id="lb4"><input type="checkbox" name="blocs" value="bloc4" onchange="updateBlocs()">
+              <div class="bicon" style="background:#fef3c7">📈</div>
+              <div class="binfo"><h4>BLOC 4 — Inter-exercices N/N-1</h4><p>Variation CA, charges, marges — signal DGI</p>
+              <div class="bdocs">📁 FEC N + FEC N-1</div></div><div class="bchk"></div></label>
+
+            <label class="bloc-c" id="lb5"><input type="checkbox" name="blocs" value="bloc5" onchange="updateBlocs()">
+              <div class="bicon" style="background:#f3e8ff">📋</div>
+              <div class="binfo"><h4>BLOC 5 — Conformité CGNC</h4><p>Soldes anormaux, classifications, comptes courants</p>
+              <div class="bdocs">📁 FEC N</div></div><div class="bchk"></div></label>
+
+            <label class="bloc-c" id="lb6"><input type="checkbox" name="blocs" value="bloc6" onchange="updateBlocs()">
+              <div class="bicon" style="background:#fee2e2">📄</div>
+              <div class="binfo"><h4>BLOC 6 — Déclaration 9421</h4><p>Honoraires GL vs 9421, RAS IR 30%, dividendes</p>
+              <div class="bdocs">📁 FEC N + Déclaration 9421 (optionnel)</div></div><div class="bchk"></div></label>
+
+            <label class="bloc-c" id="lb7"><input type="checkbox" name="blocs" value="bloc7" onchange="updateBlocs()">
+              <div class="bicon" style="background:#e0f2fe">📑</div>
+              <div class="binfo"><h4>BLOC 7 — Liasse Fiscale (Bilan/CPC)</h4><p>Cohérence liasse vs FEC, CA CPC vs GL</p>
+              <div class="bdocs">📁 FEC N + Fichier Bilan/CPC Excel</div></div><div class="bchk"></div></label>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents complémentaires (dynamiques) -->
+      <div class="card" id="docs-section" style="display:none">
+        <div class="card-hdr"><span>📎</span><h3>Documents complémentaires</h3></div>
+        <div class="card-body" id="docs-body"></div>
+      </div>
+
+      <!-- Déclarations TVA -->
+      <div class="card" id="tva-section" style="display:none">
+        <div class="card-hdr"><span>📝</span><h3>Déclarations TVA</h3></div>
+        <div class="card-body">
+          <div class="tabs-tva">
+            <button class="tab-tva act" id="tab-tva-f" onclick="switchTva('fichier')">📁 Uploader un fichier</button>
+            <button class="tab-tva" id="tab-tva-m" onclick="switchTva('manuel')">✏️ Saisir manuellement</button>
+          </div>
+
+          <!-- Option A : fichier -->
+          <div id="tva-fichier">
+            <div class="fwrap" id="wrap-tva" onclick="this.querySelector('input').click()">
+              <span>📄</span><span id="lbl-tva">Choisir fichier TVA (Excel/CSV)...</span>
+              <span class="ftag opt">OPTIONNEL</span>
+              <input type="file" name="declarations_tva" accept=".xlsx,.xls,.csv" onchange="onFile('tva',this)" onclick="event.stopPropagation()">
+            </div>
+            <div class="consigne">
+              <b>Colonnes acceptées (noms flexibles) :</b><br>
+              • <code>Période</code> ou <code>Mois</code> ou <code>Trimestre</code><br>
+              • <code>Base taxable</code> ou <code>CA HT</code> ou <code>CA taxable</code><br>
+              • <code>TVA collectée</code> ou <code>TVA facturée</code> ou <code>TVA 20%</code><br>
+              • <code>TVA déductible</code> ou <code>TVA récupérable</code> ou <code>TVA sur achats</code><br>
+              • <code>TVA nette</code> ou <code>TVA à payer</code> (optionnel)
+            </div>
+          </div>
+
+          <!-- Option B : saisie manuelle -->
+          <div id="tva-manuel" style="display:none">
+            <p style="font-size:.77rem;color:var(--g500);margin-bottom:8px">Données depuis vos déclarations SIMPL-DGI :</p>
+            <table class="tva-tbl" id="tva-tbl">
+              <thead><tr><th>Période</th><th>Base taxable (MAD)</th><th>TVA collectée</th><th>TVA déductible</th><th>TVA nette</th><th></th></tr></thead>
+              <tbody id="tva-tbody">
+                <tr>
+                  <td><input type="text" placeholder="T1 / 2024"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><button onclick="rmRow(this)" style="border:none;background:none;color:var(--crit);cursor:pointer;font-size:1rem">✕</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn-add" onclick="addTvaRow()">+ Ajouter une ligne</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="alert-zone"></div>
+
+      <button class="btn-go" id="btn-go" onclick="lancer()" disabled>
+        <span>🔍</span> Lancer l'analyse
+      </button>
+    </div>
+
+    <!-- ══ PANNEAU DROIT ══ -->
+    <div>
+      <div id="results" style="display:none">
+        <div id="score-b" class="score-b l">
+          <div><div class="score-v" id="sv">—</div><div class="score-l">Score de risque fiscal</div></div>
+          <div class="sstats">
+            <div class="sstat"><div class="sv" id="sc">0</div><div class="sl">CRITIQUES</div></div>
+            <div class="sstat"><div class="sv" id="sm">0</div><div class="sl">MOYENS</div></div>
+            <div class="sstat"><div class="sv" id="sf">0</div><div class="sl">FAIBLES</div></div>
+            <div class="sstat"><div class="sv" id="st">0</div><div class="sl">TOTAL</div></div>
+          </div>
+        </div>
+        <div id="ca-info" class="ca-detected" style="display:none"></div>
+        <div id="warns-box"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;flex-wrap:wrap;gap:8px">
+          <div class="sec-hdr" style="margin-bottom:0"><h2>Anomalies détectées</h2></div>
+          <a id="btn-pdf" href="#" class="btn-dl" target="_blank">📄 Rapport PDF</a>
+        </div>
+        <div class="filters">
+          <button class="fbtn act" onclick="filtre('tous',this)">Tous</button>
+          <button class="fbtn crit" onclick="filtre('CRITIQUE',this)">🔴 Critiques</button>
+          <button class="fbtn warn" onclick="filtre('MOYEN',this)">🟠 Moyens</button>
+          <button class="fbtn ok" onclick="filtre('FAIBLE',this)">🟢 Faibles</button>
+        </div>
+        <div class="alist" id="alist"></div>
+      </div>
+
+      <div id="empty-state" class="card">
+        <div class="empty">
+          <div class="ei">🏛️</div>
+          <h3>FiscalAudit Pro — Maroc</h3>
+          <p style="font-size:.83rem;max-width:340px;margin:.5rem auto">Uploadez votre fichier FEC (export Sage 3 clics), sélectionnez les blocs souhaités et lancez l'analyse.</p>
+          <div style="margin-top:1.2rem;display:flex;gap:7px;justify-content:center;flex-wrap:wrap">
+            <div style="background:var(--navy-p);padding:5px 11px;border-radius:6px;font-size:.72rem;color:var(--navy-l);font-weight:600">FEC N & N-1</div>
+            <div style="background:var(--navy-p);padding:5px 11px;border-radius:6px;font-size:.72rem;color:var(--navy-l);font-weight:600">Relevé bancaire</div>
+            <div style="background:var(--navy-p);padding:5px 11px;border-radius:6px;font-size:.72rem;color:var(--navy-l);font-weight:600">Déclarations TVA</div>
+            <div style="background:var(--navy-p);padding:5px 11px;border-radius:6px;font-size:.72rem;color:var(--navy-l);font-weight:600">Liasse fiscale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let anomalies_all = [];
+
+const DOCS_BLOCS = {
+  bloc3: [{key:"releve_bancaire", label:"Relevé bancaire", req:true,
+    hint:"Export depuis espace client banque (CSV/Excel)",
+    consigne:`<b>Colonnes reconnues automatiquement pour :</b><br>
+    • <b>CIH Bank :</b> <code>Date opération</code> / <code>Libellé</code> / <code>Débit</code> / <code>Crédit</code><br>
+    • <b>Attijariwafa :</b> <code>Date</code> / <code>Détail opération</code> / <code>Montant débit</code> / <code>Montant crédit</code><br>
+    • <b>BMCE/Bank of Africa :</b> <code>Date valeur</code> / <code>Description</code> / <code>Sortie</code> / <code>Entrée</code><br>
+    • <b>Banque Populaire :</b> <code>Date</code> / <code>Opération</code> / <code>Débit (MAD)</code> / <code>Crédit (MAD)</code><br>
+    • <b>BMCI :</b> <code>Date</code> / <code>Libellé</code> / <code>Débit MAD</code> / <code>Crédit MAD</code><br>
+    • <b>Société Générale :</b> <code>Date comptable</code> / <code>Libellé opération</code> / <code>Débit</code> / <code>Crédit</code><br>
+    Autres banques : colonnes <code>débit</code>/<code>crédit</code> ou <code>sortie</code>/<code>entrée</code> détectées automatiquement.`}],
+  bloc6: [{key:"declaration_9421", label:"Déclaration 9421", req:false,
+    hint:"Rémunérations versées à des tiers — DGI",
+    consigne:`<b>Colonnes attendues (noms flexibles) :</b><br>
+    • <code>Bénéficiaire</code> ou <code>Nom</code> ou <code>Tiers</code><br>
+    • <code>Montant brut</code> ou <code>Honoraires</code> ou <code>Rémunération</code><br>
+    • <code>Retenue IR</code> ou <code>RAS IR</code> ou <code>Retenue 30%</code><br>
+    • <code>ICE / CIN</code> (optionnel)<br>
+    Format accepté : Excel ou CSV.`}],
+  bloc7: [{key:"liasse_fiscale", label:"Liasse fiscale (Bilan/CPC/ESG)", req:true,
+    hint:"Fichier Excel multi-feuilles depuis votre logiciel comptable",
+    consigne:`Fichier Excel avec feuilles nommées <code>Bilan</code>, <code>CPC</code>, <code>ESG</code> ou similaire.<br>
+    Compatible avec export Sage, KHABIR, EBP et tout logiciel marocain.`}],
+};
+
+function getBlocs(){return[...document.querySelectorAll('input[name=blocs]:checked')].map(c=>c.value)}
+
+function updateBlocs(){
+  const b=getBlocs();
+  document.querySelectorAll('.bloc-c').forEach(c=>c.classList.toggle('sel',c.querySelector('input').checked));
+  document.getElementById('tva-section').style.display=b.includes('bloc1')?'block':'none';
+
+  // Docs complémentaires
+  const needed={};
+  b.forEach(bl=>{(DOCS_BLOCS[bl]||[]).forEach(f=>{if(!needed[f.key]||f.req)needed[f.key]=f})});
+  const body=document.getElementById('docs-body');
+  const sect=document.getElementById('docs-section');
+  if(!Object.keys(needed).length){sect.style.display='none';}
+  else{
+    sect.style.display='block';
+    body.innerHTML='';
+    Object.values(needed).forEach(f=>{
+      body.innerHTML+=`<div class="fr">
+        <label>${f.label}</label>
+        <div class="fwrap" id="wrap-${f.key}" onclick="this.querySelector('input').click()">
+          <span>📁</span><span id="lbl-${f.key}">${f.hint}</span>
+          <span class="ftag ${f.req?'req':'opt'}">${f.req?'Requis':'Optionnel'}</span>
+          <input type="file" name="${f.key}" accept=".xlsx,.xls,.csv,.txt" onchange="onFile('${f.key}',this)" onclick="event.stopPropagation()">
+        </div>
+        ${f.consigne?`<div class="consigne">${f.consigne}</div>`:''}
+      </div>`;
+    });
+  }
+  document.getElementById('btn-go').disabled = (b.length===0 || !document.querySelector('#wrap-fec_n.has'));
+}
+
+function onFile(key,inp){
+  const lbl=document.getElementById('lbl-'+key);
+  const wrap=document.getElementById('wrap-'+key);
+  if(inp.files[0]){
+    lbl.textContent='✓ '+inp.files[0].name;
+    wrap.classList.add('has');
+    if(key==='fec_n') document.getElementById('btn-go').disabled=(getBlocs().length===0);
+  } else {
+    lbl.textContent=key==='fec_n'?'Choisir fichier FEC (.txt) ou Excel/CSV...':'...';
+    wrap.classList.remove('has');
+  }
+}
+
+function switchTva(mode){
+  document.getElementById('tva-fichier').style.display=mode==='fichier'?'block':'none';
+  document.getElementById('tva-manuel').style.display=mode==='manuel'?'block':'none';
+  document.getElementById('tab-tva-f').classList.toggle('act',mode==='fichier');
+  document.getElementById('tab-tva-m').classList.toggle('act',mode==='manuel');
+}
+
+function addTvaRow(){
+  const tb=document.getElementById('tva-tbody');
+  const row=tb.rows[0].cloneNode(true);
+  row.querySelectorAll('input').forEach(i=>i.value='');
+  tb.appendChild(row);
+}
+function rmRow(btn){
+  const tb=document.getElementById('tva-tbody');
+  if(tb.rows.length>1) btn.closest('tr').remove();
+}
+
+function getTvaManuel(){
+  const rows=[];
+  document.querySelectorAll('#tva-tbody tr').forEach(tr=>{
+    const inp=tr.querySelectorAll('input');
+    const p=inp[0].value.trim();
+    if(!p)return;
+    rows.push({periode:p,base_taxable:parseFloat(inp[1].value)||0,
+      tva_collectee:parseFloat(inp[2].value)||0,
+      tva_deductible:parseFloat(inp[3].value)||0,
+      tva_nette:parseFloat(inp[4].value)||0});
+  });
+  return rows;
+}
+
+async function lancer(){
+  const b=getBlocs();
+  if(!b.length){showAlert('Sélectionnez au moins un bloc.','e');return}
+  if(!document.querySelector('#wrap-fec_n.has')){showAlert('Le fichier FEC N est obligatoire.','e');return}
+
+  const fd=new FormData();
+  b.forEach(bl=>fd.append('blocs',bl));
+  fd.append('nom_entreprise',document.getElementById('nom').value||'Entreprise');
+  fd.append('exercice',document.getElementById('exercice').value);
+  fd.append('ca_exercice',document.getElementById('ca').value||'0');
+  fd.append('resultat_comptable',document.getElementById('resultat').value||'0');
+
+  // TVA
+  const tvaModeManuel = document.getElementById('tva-manuel').style.display!=='none';
+  if(tvaModeManuel){
+    fd.append('declarations_tva_manuel',JSON.stringify(getTvaManuel()));
+  }
+
+  // Fichiers
+  document.querySelectorAll('input[type=file]').forEach(inp=>{
+    if(inp.files[0]&&inp.name) fd.append(inp.name,inp.files[0]);
+  });
+
+  document.getElementById('lo').classList.add('act');
+  document.getElementById('alert-zone').innerHTML='';
+
+  try{
+    const resp=await fetch('/api/analyser',{method:'POST',body:fd});
+    const data=await resp.json();
+    if(!resp.ok||data.error){showAlert(data.error||'Erreur serveur','e');return}
+    afficher(data);
+  }catch(e){showAlert('Erreur réseau : '+e.message,'e')}
+  finally{document.getElementById('lo').classList.remove('act')}
+}
+
+function afficher(data){
+  anomalies_all=data.anomalies||[];
+  const s=data.score_risque||0;
+  const sb=document.getElementById('score-b');
+  sb.className='score-b '+(s>=70?'h':s>=40?'m':'l');
+  document.getElementById('sv').textContent=s+'/100';
+  document.getElementById('sc').textContent=data.critiques||0;
+  document.getElementById('sm').textContent=data.moyens||0;
+  document.getElementById('sf').textContent=data.faibles||0;
+  document.getElementById('st').textContent=data.total_anomalies||0;
+  document.getElementById('btn-pdf').href='/api/rapport/'+data.rapport_id;
+
+  // CA détecté
+  if(data.ca_detecte>0){
+    const ci=document.getElementById('ca-info');
+    ci.style.display='block';
+    ci.textContent='✓ CA détecté depuis FEC : '+fmt(data.ca_detecte)+' MAD';
+  }
+
+  // Warnings
+  const wb=document.getElementById('warns-box');
+  wb.innerHTML='';
+  if(data.warnings&&data.warnings.length){
+    wb.innerHTML='<div class="alert alert-w">⚠ '+data.warnings.join(' | ')+'</div>';
+  }
+
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('results').style.display='block';
+  renderAnomalies('tous');
+}
+
+function renderAnomalies(f){
+  const list=document.getElementById('alist');
+  const filtered=f==='tous'?anomalies_all:anomalies_all.filter(a=>a.severity===f);
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty"><div class="ei">${f==='tous'?'✅':'🔍'}</div>
+      <h3>${f==='tous'?'Aucune anomalie détectée !':'Aucune anomalie '+f.toLowerCase()}</h3></div>`;
+    return;
+  }
+  list.innerHTML=filtered.map(a=>`
+    <div class="ac ${a.severity}">
+      <div class="ahdr">
+        <span class="sbadge ${a.severity}">${a.severity}</span>
+        <span class="acode">${a.code}</span>
+        <span class="adesc">${a.description}</span>
+        ${a.montant?`<span class="amnt">${fmt(a.montant)} MAD</span>`:''}
+      </div>
+      <div class="acgi">⚖️ ${a.reference_cgi}</div>
+      <div class="areco">${a.recommandation}</div>
+      ${a.detail?`<div style="margin-top:4px;font-size:.75rem;color:var(--g500);font-style:italic">${a.detail}</div>`:''}
+      ${a.compte?`<div style="margin-top:4px;font-size:.73rem;color:var(--g500)">Compte : <code style="background:var(--g100);padding:1px 5px;border-radius:3px">${a.compte}</code></div>`:''}
+    </div>`).join('');
+}
+
+function filtre(t,btn){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  renderAnomalies(t);
+}
+
+function fmt(n){return new Intl.NumberFormat('fr-MA',{maximumFractionDigits:0}).format(n)}
+
+function showAlert(msg,type){
+  document.getElementById('alert-zone').innerHTML=`<div class="alert alert-${type}">${msg}</div>`;
+}
+</script>
+</body>
+</html>

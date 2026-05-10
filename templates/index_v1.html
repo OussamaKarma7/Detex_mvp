@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FiscalAudit Pro — Audit Fiscal Maroc</title>
+<style>
+  :root {
+    --navy: #1a365d;
+    --navy-light: #2c5282;
+    --navy-pale: #ebf4ff;
+    --critique: #c53030;
+    --critique-bg: #fff5f5;
+    --moyen: #c05621;
+    --moyen-bg: #fffaf0;
+    --faible: #276749;
+    --faible-bg: #f0fff4;
+    --grey-50: #f7fafc;
+    --grey-100: #edf2f7;
+    --grey-200: #e2e8f0;
+    --grey-500: #718096;
+    --grey-700: #4a5568;
+    --grey-900: #1a202c;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--grey-50);
+    color: var(--grey-900);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.3px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #4299e1, #63b3ed);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .header-badge {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+  .page-subtitle { color: var(--grey-500); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .grid-2 { display: grid; grid-template-columns: 400px 1fr; gap: 1.5rem; align-items: start; }
+
+  @media(max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--grey-200);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--grey-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header h3 { font-size: 0.95rem; font-weight: 700; color: var(--navy); }
+  .card-body { padding: 1.25rem; }
+
+  /* ── FORM ELEMENTS ── */
+  .form-row { margin-bottom: 1rem; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--grey-700);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--grey-200);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    color: var(--grey-900);
+    background: var(--white);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus { border-color: var(--navy-light); }
+
+  /* ── BLOCS SELECTOR ── */
+  .blocs-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  
+  .bloc-card {
+    border: 1.5px solid var(--grey-200);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    position: relative;
+  }
+  .bloc-card:hover { border-color: var(--navy-light); background: var(--navy-pale); }
+  .bloc-card.selected {
+    border-color: var(--navy);
+    background: var(--navy-pale);
+    box-shadow: 0 0 0 3px rgba(26,54,93,0.1);
+  }
+  .bloc-card input[type="checkbox"] { display: none; }
+  .bloc-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .bloc-info h4 { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .bloc-info p { font-size: 0.75rem; color: var(--grey-500); line-height: 1.4; }
+  .bloc-docs {
+    font-size: 0.7rem;
+    color: var(--navy-light);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .bloc-check {
+    position: absolute;
+    top: 8px; right: 10px;
+    width: 18px; height: 18px;
+    border: 2px solid var(--grey-200);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+    color: white;
+    background: white;
+    transition: all 0.2s;
+  }
+  .bloc-card.selected .bloc-check {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+  .bloc-card.selected .bloc-check::after { content: "✓"; }
+
+  /* ── DYNAMIC FILES SECTION ── */
+  #fichiers-section { transition: all 0.3s; }
+  .file-group { margin-bottom: 0.8rem; }
+  .file-group label { color: var(--navy); }
+  .file-input-wrap {
+    position: relative;
+    border: 1.5px dashed var(--grey-200);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--grey-50);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--grey-500);
+  }
+  .file-input-wrap:hover { border-color: var(--navy-light); background: var(--navy-pale); color: var(--navy); }
+  .file-input-wrap.has-file { border-color: var(--faible); background: var(--faible-bg); color: var(--faible); }
+  .file-input-wrap input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+  }
+  .file-icon { font-size: 1.1rem; }
+  .tag-required {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: var(--critique-bg);
+    color: var(--critique);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: auto;
+    text-transform: uppercase;
+  }
+  .tag-optional {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: var(--moyen-bg);
+    color: var(--moyen);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: auto;
+    text-transform: uppercase;
+  }
+
+  /* ── TVA MANUAL INPUT ── */
+  #tva-manuel-section { display: none; }
+  .tva-table-wrap { overflow-x: auto; }
+  .tva-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .tva-table th {
+    background: var(--navy);
+    color: white;
+    padding: 7px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+  .tva-table td { padding: 5px 6px; border-bottom: 1px solid var(--grey-100); }
+  .tva-table input {
+    width: 100%;
+    border: 1px solid var(--grey-200);
+    border-radius: 5px;
+    padding: 4px 7px;
+    font-size: 0.8rem;
+  }
+  .btn-add-row {
+    font-size: 0.78rem;
+    color: var(--navy-light);
+    background: none;
+    border: 1px dashed var(--grey-200);
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    margin-top: 6px;
+    width: 100%;
+    transition: all 0.2s;
+  }
+  .btn-add-row:hover { background: var(--navy-pale); border-color: var(--navy); }
+
+  /* ── SUBMIT BUTTON ── */
+  .btn-analyse {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-analyse:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(26,54,93,0.3);
+  }
+  .btn-analyse:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* ── RESULTS ── */
+  #results-panel { display: none; }
+
+  .score-banner {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .score-banner.high { background: linear-gradient(135deg, #c53030, #e53e3e); color: white; }
+  .score-banner.medium { background: linear-gradient(135deg, #c05621, #ed8936); color: white; }
+  .score-banner.low { background: linear-gradient(135deg, #276749, #38a169); color: white; }
+
+  .score-value { font-size: 3.5rem; font-weight: 800; line-height: 1; }
+  .score-label { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
+  .score-stats { display: flex; gap: 1.5rem; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; }
+  .stat-lbl { font-size: 0.75rem; opacity: 0.85; }
+
+  /* ── ANOMALY CARDS ── */
+  .anomalies-list { display: flex; flex-direction: column; gap: 10px; }
+  
+  .anomalie-card {
+    border-radius: var(--radius);
+    border-left: 4px solid;
+    padding: 1rem 1.1rem;
+    border: 1px solid;
+    transition: box-shadow 0.2s;
+  }
+  .anomalie-card:hover { box-shadow: var(--shadow-md); }
+  .anomalie-card.CRITIQUE {
+    border-color: var(--critique);
+    border-left-color: var(--critique);
+    background: var(--critique-bg);
+    border-left-width: 4px;
+  }
+  .anomalie-card.MOYEN {
+    border-color: #fed7aa;
+    border-left-color: var(--moyen);
+    background: var(--moyen-bg);
+    border-left-width: 4px;
+  }
+  .anomalie-card.FAIBLE {
+    border-color: #c6f6d5;
+    border-left-color: var(--faible);
+    background: var(--faible-bg);
+    border-left-width: 4px;
+  }
+
+  .anomalie-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .severity-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .severity-badge.CRITIQUE { background: var(--critique); color: white; }
+  .severity-badge.MOYEN { background: var(--moyen); color: white; }
+  .severity-badge.FAIBLE { background: var(--faible); color: white; }
+  
+  .anomalie-code { font-size: 0.75rem; color: var(--grey-500); font-family: monospace; }
+  .anomalie-desc { font-size: 0.88rem; font-weight: 600; color: var(--grey-900); flex: 1; }
+  .anomalie-montant {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    background: rgba(26,54,93,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .anomalie-body { font-size: 0.82rem; }
+  .cgi-ref {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e9d8fd;
+    color: #553c9a;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .recommandation {
+    color: var(--grey-700);
+    line-height: 1.5;
+    font-size: 0.82rem;
+  }
+  .recommandation::before { content: "→ "; font-weight: 700; color: var(--navy); }
+  .detail-text {
+    color: var(--grey-500);
+    font-size: 0.76rem;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* ── FILTERS ── */
+  .filters-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .filter-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--grey-200);
+    background: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--grey-700);
+  }
+  .filter-btn:hover { border-color: var(--navy); color: var(--navy); }
+  .filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+  .filter-btn.critique.active { background: var(--critique); border-color: var(--critique); }
+  .filter-btn.moyen.active { background: var(--moyen); border-color: var(--moyen); }
+  .filter-btn.faible.active { background: var(--faible); border-color: var(--faible); }
+
+  /* ── DOWNLOAD BTN ── */
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: var(--navy);
+    color: white;
+    border-radius: var(--radius);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-download:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+  /* ── LOADING ── */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,32,44,0.7);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    color: white;
+  }
+  .loading-overlay.active { display: flex; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 1rem; font-weight: 600; opacity: 0.9; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--grey-500);
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state h3 { font-size: 1.1rem; color: var(--grey-700); margin-bottom: 0.5rem; }
+
+  /* ── ALERT ── */
+  .alert {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+  }
+  .alert-error { background: var(--critique-bg); border-color: var(--critique); color: var(--critique); }
+  .alert-success { background: var(--faible-bg); border-color: var(--faible); color: var(--faible); }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--grey-200); margin-bottom: 1.2rem; }
+  .tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--grey-500);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--navy); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+
+  .count-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--grey-200);
+    color: var(--grey-700);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📊</div>
+    FiscalAudit Pro
+  </div>
+  <span class="header-badge">MAROC — CGI 2024/2026</span>
+</header>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Analyse en cours...</div>
+  <div style="font-size:0.8rem;opacity:0.7;margin-top:-0.5rem">Détection des anomalies fiscales</div>
+</div>
+
+<div class="container">
+  <p class="page-title">Audit Fiscal Préventif</p>
+  <p class="page-subtitle">Détectez les anomalies TVA, IS, bancaires et de conformité CGNC avant un contrôle DGI</p>
+
+  <div class="grid-2">
+    <!-- ── PANNEAU GAUCHE : Configuration ── -->
+    <div>
+      <!-- Infos entreprise -->
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header">
+          <span>🏢</span>
+          <h3>Informations de la mission</h3>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <label>Raison sociale</label>
+            <input type="text" id="nom_entreprise" placeholder="SARL ALPHA TRADING" value="">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="form-row">
+              <label>Exercice</label>
+              <input type="number" id="exercice" value="2024" min="2018" max="2030">
+            </div>
+            <div class="form-row">
+              <label>CA HT (MAD)</label>
+              <input type="number" id="ca_exercice" placeholder="0" min="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Résultat comptable (MAD)</label>
+            <input type="number" id="resultat_comptable" placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélection blocs -->
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header">
+          <span>🔍</span>
+          <h3>Sélection des blocs d'analyse</h3>
+        </div>
+        <div class="card-body">
+          <div class="blocs-grid" id="blocs-grid">
+
+            <label class="bloc-card" id="label-bloc1">
+              <input type="checkbox" name="blocs" value="bloc1" onchange="updateBlocs()">
+              <div class="bloc-icon" style="background:#ebf4ff">🧾</div>
+              <div class="bloc-info">
+                <h4>BLOC 1 — Audit TVA</h4>
+                <p>Écart CA/TVA, taux incorrects, TVA non déductible, retenue source LF2024, prorata</p>
+                <div class="bloc-docs">📁 Grand livre + Déclarations TVA</div>
+              </div>
+              <div class="bloc-check"></div>
+            </label>
+
+            <label class="bloc-card" id="label-bloc2">
+              <input type="checkbox" name="blocs" value="bloc2" onchange="updateBlocs()">
+              <div class="bloc-icon" style="background:#f0fff4">💼</div>
+              <div class="bloc-info">
+                <h4>BLOC 2 — IS / Résultat fiscal</h4>
+                <p>Charges non déductibles, amortissements véhicules, CM, provisions, paiements espèces</p>
+                <div class="bloc-docs">📁 Grand livre + Balance N</div>
+              </div>
+              <div class="bloc-check"></div>
+            </label>
+
+            <label class="bloc-card" id="label-bloc3">
+              <input type="checkbox" name="blocs" value="bloc3" onchange="updateBlocs()">
+              <div class="bloc-icon" style="background:#fef9c3">🏦</div>
+              <div class="bloc-info">
+                <h4>BLOC 3 — Rapprochement bancaire</h4>
+                <p>Écart GL/relevé, encaissements non comptabilisés, chèques en transit, virements suspects</p>
+                <div class="bloc-docs">📁 Grand livre + Relevé bancaire</div>
+              </div>
+              <div class="bloc-check"></div>
+            </label>
+
+            <label class="bloc-card" id="label-bloc4">
+              <input type="checkbox" name="blocs" value="bloc4" onchange="updateBlocs()">
+              <div class="bloc-icon" style="background:#fef3c7">📈</div>
+              <div class="bloc-info">
+                <h4>BLOC 4 — Cohérence inter-exercices</h4>
+                <p>Variation CA/charges/marge anormale, créances clients, report à nouveau</p>
+                <div class="bloc-docs">📁 Balance N + Balance N-1</div>
+              </div>
+              <div class="bloc-check"></div>
+            </label>
+
+            <label class="bloc-card" id="label-bloc5">
+              <input type="checkbox" name="blocs" value="bloc5" onchange="updateBlocs()">
+              <div class="bloc-icon" style="background:#f3e8ff">📋</div>
+              <div class="bloc-info">
+                <h4>BLOC 5 — Conformité CGNC</h4>
+                <p>Plan comptable, soldes anormaux, classif. erreurs, comptes régularisation, CCA</p>
+                <div class="bloc-docs">📁 Grand livre</div>
+              </div>
+              <div class="bloc-check"></div>
+            </label>
+
+            <label class="bloc-card" id="label-bloc6">
+              <input type="checkbox" name="blocs" value="bloc6" onchange="updateBlocs()">
+              <div class="bloc-icon" style="background:#fee2e2">📄</div>
+              <div class="bloc-info">
+                <h4>BLOC 6 — Déclaration 9421</h4>
+                <p>Honoraires GL vs 9421, retenues IR 30%, RAS dividendes 15%</p>
+                <div class="bloc-docs">📁 Grand livre + Déclaration 9421 (optionnel)</div>
+              </div>
+              <div class="bloc-check"></div>
+            </label>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Fichiers dynamiques -->
+      <div class="card" id="fichiers-section" style="margin-bottom:1rem;display:none">
+        <div class="card-header">
+          <span>📂</span>
+          <h3>Documents à charger</h3>
+        </div>
+        <div class="card-body" id="fichiers-body">
+          <!-- Généré dynamiquement -->
+        </div>
+      </div>
+
+      <!-- TVA Manuel -->
+      <div class="card" id="tva-manuel-section" style="margin-bottom:1rem">
+        <div class="card-header">
+          <span>📝</span>
+          <h3>Déclarations TVA (saisie manuelle)</h3>
+        </div>
+        <div class="card-body">
+          <p style="font-size:0.8rem;color:var(--grey-500);margin-bottom:10px">
+            Saisir les montants depuis vos déclarations TVA déposées sur SIMPL-DGI.
+            Non obligatoire — laissez vide si non disponible.
+          </p>
+          <div class="tva-table-wrap">
+            <table class="tva-table" id="tva-table">
+              <thead>
+                <tr>
+                  <th>Mois/Trim.</th>
+                  <th>Base taxable (MAD)</th>
+                  <th>TVA collectée</th>
+                  <th>TVA déductible</th>
+                  <th>TVA nette</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tva-tbody">
+                <tr>
+                  <td><input type="text" placeholder="01/2024"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><input type="number" placeholder="0"></td>
+                  <td><button onclick="removeRow(this)" style="border:none;background:none;color:#c53030;cursor:pointer;font-size:1rem">✕</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn-add-row" onclick="addTvaRow()">+ Ajouter une ligne</button>
+        </div>
+      </div>
+
+      <div id="alert-zone"></div>
+
+      <button class="btn-analyse" id="btn-analyser" onclick="lancer_analyse()" disabled>
+        <span>🔍</span> Lancer l'analyse
+      </button>
+    </div>
+
+    <!-- ── PANNEAU DROIT : Résultats ── -->
+    <div>
+      <div id="results-panel">
+        <!-- Score banner -->
+        <div id="score-banner" class="score-banner">
+          <div>
+            <div class="score-value" id="score-val">—</div>
+            <div class="score-label">Score de risque fiscal</div>
+          </div>
+          <div class="score-stats">
+            <div class="stat">
+              <div class="stat-val" id="stat-critique">0</div>
+              <div class="stat-lbl">CRITIQUES</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" id="stat-moyen">0</div>
+              <div class="stat-lbl">MOYENS</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" id="stat-faible">0</div>
+              <div class="stat-lbl">FAIBLES</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" id="stat-total">0</div>
+              <div class="stat-lbl">TOTAL</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px">
+          <div class="section-header" style="margin-bottom:0">
+            <h2>Anomalies détectées</h2>
+          </div>
+          <a id="btn-pdf" href="#" class="btn-download" target="_blank">
+            📄 Télécharger rapport PDF
+          </a>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+          <button class="filter-btn active" onclick="filtrer('tous', this)">Tous</button>
+          <button class="filter-btn critique" onclick="filtrer('CRITIQUE', this)">🔴 Critiques</button>
+          <button class="filter-btn moyen" onclick="filtrer('MOYEN', this)">🟠 Moyens</button>
+          <button class="filter-btn faible" onclick="filtrer('FAIBLE', this)">🟢 Faibles</button>
+        </div>
+
+        <div class="anomalies-list" id="anomalies-list"></div>
+      </div>
+
+      <!-- Empty state initial -->
+      <div id="empty-state" class="card">
+        <div class="empty-state">
+          <div class="empty-icon">🏛️</div>
+          <h3>Audit fiscal préventif Maroc</h3>
+          <p style="font-size:0.85rem;max-width:340px;margin:0.5rem auto">
+            Sélectionnez les blocs d'analyse souhaités, chargez vos fichiers exportés depuis Sage / Ciel / autre
+            et lancez l'analyse automatique.
+          </p>
+          <div style="margin-top:1.5rem;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <div style="background:var(--navy-pale);padding:6px 12px;border-radius:6px;font-size:0.75rem;color:var(--navy-light);font-weight:600">Grand livre Excel/CSV</div>
+            <div style="background:var(--navy-pale);padding:6px 12px;border-radius:6px;font-size:0.75rem;color:var(--navy-light);font-weight:600">Balance comptable</div>
+            <div style="background:var(--navy-pale);padding:6px 12px;border-radius:6px;font-size:0.75rem;color:var(--navy-light);font-weight:600">Relevé bancaire</div>
+            <div style="background:var(--navy-pale);padding:6px 12px;border-radius:6px;font-size:0.75rem;color:var(--navy-light);font-weight:600">Déclarations TVA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── État global ──
+let currentAnomalie = [];
+let currentFilter = 'tous';
+
+// ── Config fichiers par bloc ──
+const FICHIERS_CONFIG = {
+  bloc1: [
+    { key: "grand_livre", label: "Grand livre", required: true, hint: "Export Sage: État → Grand livre → Imprimer dans fichier (Excel/CSV)" },
+  ],
+  bloc2: [
+    { key: "grand_livre", label: "Grand livre", required: true, hint: "Export Sage: État → Grand livre (Excel/CSV)" },
+    { key: "balance_n", label: "Balance comptable N", required: false, hint: "Export Sage: État → Balance des comptes (Excel/CSV)" },
+  ],
+  bloc3: [
+    { key: "grand_livre", label: "Grand livre", required: true, hint: "Export Sage: État → Grand livre (Excel/CSV)" },
+    { key: "releve_bancaire", label: "Relevé bancaire", required: true, hint: "Export banque (Excel/CSV) ou Sage Trésorerie → Importer relevé" },
+  ],
+  bloc4: [
+    { key: "balance_n", label: "Balance N (exercice actuel)", required: true, hint: "Export Sage: État → Balance (Excel/CSV)" },
+    { key: "balance_n1", label: "Balance N-1 (exercice précédent)", required: true, hint: "Même export pour l'exercice précédent" },
+  ],
+  bloc5: [
+    { key: "grand_livre", label: "Grand livre", required: true, hint: "Export Sage: État → Grand livre (Excel/CSV)" },
+  ],
+  bloc6: [
+    { key: "grand_livre", label: "Grand livre", required: true, hint: "Export Sage: État → Grand livre (Excel/CSV)" },
+    { key: "declaration_9421", label: "Déclaration 9421", required: false, hint: "Export déclaration rémunérations tiers DGI (CSV/Excel)" },
+  ],
+};
+
+function getActiveBlocs() {
+  return [...document.querySelectorAll('input[name="blocs"]:checked')].map(c => c.value);
+}
+
+function updateBlocs() {
+  const blocs = getActiveBlocs();
+  // Style visuel
+  document.querySelectorAll('.bloc-card').forEach(c => {
+    c.classList.toggle('selected', c.querySelector('input').checked);
+  });
+
+  // Section TVA manuel
+  document.getElementById('tva-manuel-section').style.display = blocs.includes('bloc1') ? 'block' : 'none';
+
+  // Fichiers nécessaires (dédupliqués)
+  const fichiersNeeded = {};
+  blocs.forEach(b => {
+    (FICHIERS_CONFIG[b] || []).forEach(f => {
+      if (!fichiersNeeded[f.key] || f.required) {
+        fichiersNeeded[f.key] = f;
+      }
+    });
+  });
+
+  const body = document.getElementById('fichiers-body');
+  const section = document.getElementById('fichiers-section');
+
+  if (Object.keys(fichiersNeeded).length === 0) {
+    section.style.display = 'none';
+    document.getElementById('btn-analyser').disabled = true;
+    return;
+  }
+
+  section.style.display = 'block';
+  body.innerHTML = '';
+  Object.values(fichiersNeeded).forEach(f => {
+    body.innerHTML += `
+      <div class="file-group">
+        <label>${f.label} <span style="font-weight:400;color:var(--grey-500)">(${f.hint})</span></label>
+        <div class="file-input-wrap" id="wrap-${f.key}" onclick="this.querySelector('input').click()">
+          <span class="file-icon">📁</span>
+          <span id="lbl-${f.key}">Choisir fichier Excel ou CSV...</span>
+          <span class="${f.required ? 'tag-required' : 'tag-optional'}">${f.required ? 'Requis' : 'Optionnel'}</span>
+          <input type="file" name="${f.key}" accept=".xlsx,.xls,.csv"
+                 onchange="onFileSelect('${f.key}', this)" onclick="event.stopPropagation()">
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('btn-analyser').disabled = false;
+}
+
+function onFileSelect(key, input) {
+  const lbl = document.getElementById('lbl-' + key);
+  const wrap = document.getElementById('wrap-' + key);
+  if (input.files[0]) {
+    lbl.textContent = '✓ ' + input.files[0].name;
+    wrap.classList.add('has-file');
+  } else {
+    lbl.textContent = 'Choisir fichier Excel ou CSV...';
+    wrap.classList.remove('has-file');
+  }
+}
+
+// ── TVA manuel ──
+function addTvaRow() {
+  const tbody = document.getElementById('tva-tbody');
+  const row = tbody.rows[0].cloneNode(true);
+  row.querySelectorAll('input').forEach(i => i.value = '');
+  tbody.appendChild(row);
+}
+function removeRow(btn) {
+  const tbody = document.getElementById('tva-tbody');
+  if (tbody.rows.length > 1) btn.closest('tr').remove();
+}
+
+function getTvaManuel() {
+  const rows = [];
+  document.querySelectorAll('#tva-tbody tr').forEach(tr => {
+    const inputs = tr.querySelectorAll('input');
+    const periode = inputs[0].value.trim();
+    if (!periode) return;
+    rows.push({
+      periode,
+      base_taxable: parseFloat(inputs[1].value) || 0,
+      tva_collectee: parseFloat(inputs[2].value) || 0,
+      tva_deductible: parseFloat(inputs[3].value) || 0,
+      tva_nette: parseFloat(inputs[4].value) || 0,
+    });
+  });
+  return rows;
+}
+
+// ── Lancer l'analyse ──
+async function lancer_analyse() {
+  const blocs = getActiveBlocs();
+  if (blocs.length === 0) {
+    showAlert('Sélectionnez au moins un bloc d\'analyse.', 'error');
+    return;
+  }
+
+  const fd = new FormData();
+  blocs.forEach(b => fd.append('blocs', b));
+  fd.append('nom_entreprise', document.getElementById('nom_entreprise').value || 'Entreprise');
+  fd.append('exercice', document.getElementById('exercice').value);
+  fd.append('ca_exercice', document.getElementById('ca_exercice').value || '0');
+  fd.append('resultat_comptable', document.getElementById('resultat_comptable').value || '0');
+  fd.append('declarations_tva_manuel', JSON.stringify(getTvaManuel()));
+
+  // Ajouter fichiers
+  document.querySelectorAll('#fichiers-body input[type="file"]').forEach(inp => {
+    if (inp.files[0]) fd.append(inp.name, inp.files[0]);
+  });
+
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('alert-zone').innerHTML = '';
+
+  try {
+    const resp = await fetch('/api/analyser', { method: 'POST', body: fd });
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      showAlert(data.error || 'Erreur serveur', 'error');
+      return;
+    }
+
+    afficherResultats(data);
+  } catch (e) {
+    showAlert('Erreur de connexion: ' + e.message, 'error');
+  } finally {
+    document.getElementById('loading').classList.remove('active');
+  }
+}
+
+function afficherResultats(data) {
+  currentAnomalie = data.anomalies || [];
+
+  // Score banner
+  const score = data.score_risque || 0;
+  const banner = document.getElementById('score-banner');
+  banner.className = 'score-banner ' + (score >= 70 ? 'high' : score >= 40 ? 'medium' : 'low');
+  document.getElementById('score-val').textContent = score + '/100';
+  document.getElementById('stat-critique').textContent = data.critiques || 0;
+  document.getElementById('stat-moyen').textContent = data.moyens || 0;
+  document.getElementById('stat-faible').textContent = data.faibles || 0;
+  document.getElementById('stat-total').textContent = data.total_anomalies || 0;
+
+  // PDF link
+  document.getElementById('btn-pdf').href = `/api/rapport/${data.rapport_id}`;
+
+  // Afficher
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('results-panel').style.display = 'block';
+
+  renderAnomalies('tous');
+}
+
+function renderAnomalies(filtre) {
+  currentFilter = filtre;
+  const liste = document.getElementById('anomalies-list');
+  const filtered = filtre === 'tous' ? currentAnomalie : currentAnomalie.filter(a => a.severity === filtre);
+  
+  if (filtered.length === 0) {
+    liste.innerHTML = `<div class="empty-state"><div class="empty-icon">${filtre === 'tous' ? '✅' : '🔍'}</div>
+      <h3>${filtre === 'tous' ? 'Aucune anomalie détectée !' : `Aucune anomalie de niveau ${filtre}`}</h3>
+      <p>La situation fiscale semble conforme pour les blocs analysés.</p></div>`;
+    return;
+  }
+
+  liste.innerHTML = filtered.map(a => `
+    <div class="anomalie-card ${a.severity}">
+      <div class="anomalie-header">
+        <span class="severity-badge ${a.severity}">${a.severity}</span>
+        <span class="anomalie-code">${a.code}</span>
+        <span class="anomalie-desc">${a.description}</span>
+        ${a.montant ? `<span class="anomalie-montant">${formatMontant(a.montant)} MAD</span>` : ''}
+      </div>
+      <div class="anomalie-body">
+        <div class="cgi-ref">⚖️ ${a.reference_cgi}</div>
+        <div class="recommandation">${a.recommandation}</div>
+        ${a.detail ? `<div class="detail-text">${a.detail}</div>` : ''}
+        ${a.compte ? `<div style="margin-top:5px;font-size:0.75rem;color:var(--grey-500)">Compte : <code style="background:var(--grey-100);padding:1px 5px;border-radius:3px">${a.compte}</code></div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrer(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAnomalies(type);
+}
+
+function formatMontant(n) {
+  return new Intl.NumberFormat('fr-MA', { maximumFractionDigits: 0 }).format(n);
+}
+
+function showAlert(msg, type) {
+  document.getElementById('alert-zone').innerHTML =
+    `<div class="alert alert-${type}">${msg}</div>`;
+}
+</script>
+</body>
+</html>
